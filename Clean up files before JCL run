@@ -1,0 +1,177 @@
+//EQQDELDS  PROC RUNTYP='',    /*                                    */ 00010000
+//          TYPRUN='',         /* RUNTYP AND TYPRUN ARE FOR OLD CA11 */ 00020000
+//*                            /* DEFAULT VALUES ARE LISTED FIRST    */ 00030000
+//*                            /* SEE PARAMETER DESCRIPTIONS BELOW   */ 00040000
+//          ABTYPE='ABEND',    /* ABEND OR RETCODE                   */ 00050000
+//          CONDO='NOCONDO',   /* NOCOND OR CONDONLY                 */ 00060000
+//          PASS='PASS',       /* NOPASS OR PASS                     */ 00070000
+//          PURGE='YES',       /* NO  OR  YES                        */ 00080000
+//          RMM='NO',          /* NO  OR  YES                        */ 00090000
+//          GDGNSTD='NO',      /* NO  OR  YES                        */ 00100000
+//          DELLOGIC='2',      /* 1   OR    2                        */ 00110000
+//          NOREEX='NO'        /* YES OR NO'                         */ 00120000
+//*                            /*                                    */ 00130000
+//*                                                                     00140000
+//* CREATED 01/04/2005  B TREDWAY FROM EQQSAMP(EQQDELDI)                00150000
+//* UPDATED 04/07/2005  B TREDWAY ADDED TWSNEVER DD DUMMY TO STEPS      00160000
+//* UPDATED 05/17/2005  B TREDWAY CHANGE DELLOGIC TO 2                  00170000
+//* UPDATED 09/14/2005  B TREDWAY ADD NOREEX PARAMETER                  00180000
+//*                                                                     00190000
+//*                                                                     00200000
+//*                                                                     00210000
+//*      SEVEN PARAMETERS CAN BE PASSED TO EQQDELDS:                    00220000
+//*                                                                     00230000
+//*       PARM='ABTYPE,CONDO,PASS,PURGE,RMM,GDGNSTD,DELLOGIC'           00240000
+//*                                                                     00250000
+//*       THE PARAMETERS CAN HAVE FOLLOWING VALUES:                     00260000
+//*                                                                     00270000
+//*       ABTYPE                                                        00280000
+//*       ------                                                        00290000
+//*         - 'ABEND'                                                   00300000
+//*           THIS IS THE DEFAULT. EQQDELDS WILL ABEND WITH             00310000
+//*           USER CODE 64 IF A NONZERO RETURN CODE IS RECEIVED         00320000
+//*           FROM EITHER IDCAMS OR ARCHDEL.                            00330000
+//*           THIS IS THE DEFAULT IF AN INVALID VALUE IS SPECIFIED      00340000
+//*                                                                     00350000
+//*         - 'RETCODE'                                                 00360000
+//*         THIS PARAMETER VALUE WILL CAUSE EQQDELDS TO END WITH        00370000
+//*         RETURN CODE 16 IF A NONZERO RETURN CODE IS RECEIVED FROM    00380000
+//*         EITHER IDCAMS OR ARCHDEL.                                   00390000
+//*                                                                     00400000
+//*       CONDO                                                         00410000
+//*       -----                                                         00420000
+//*         - 'NOCONDO'                                                 00430000
+//*           EQQDELDS WILL NOT PROCESS DATASETS IN A COND=ONLY STEP    00440000
+//*           THIS IS THE DEFAULT IF AN INVALID VALUE IS SPECIFIED      00450000
+//*                                                                     00460000
+//*         - 'CONDONLY'                                                00470000
+//*           EQQDELDS WILL PROCESS EVEN DATASETS IN A COND=ONLY STEP   00480000
+//*                                                                     00490000
+//*       PASS                                                          00500000
+//*       ----                                                          00510000
+//*         - 'NOPASS'                                                  00520000
+//*           EQQDELDS WILL NOT TREAT PASSED DATASETS IN ANY            00530000
+//*           SPECIAL WAY.                                              00540000
+//*           THIS IS THE DEFAULT IF AN INVALID VALUE IS SPECIFIED      00550000
+//*                                                                     00560000
+//*         - 'PASS'                                                    00570000
+//*           DATA SETS WITH DISP=(NEW,PASS) WILL BE CHECKED,           00580000
+//*           INCLUDING SITUATIONS LIKE DISP=(NEW,KEEP) AND             00590000
+//*           A DD ....VOL=REF=XYZ123,DISP=(OLD,CATLD) FURTHER DOWN,    00600000
+//*                                                                     00610000
+//*       PURGE                                                         00620000
+//*       ----                                                          00630000
+//*         - 'NO'                                                      00640000
+//*           EQQDELDS WILL NOT TREAT DATASETS WITH EXPIRATION DATE.    00650000
+//*           ONLY EXPIRED DATASETS WILL BE DELETED.                    00660000
+//*           THIS IS THE DEFAULT IF AN INVALID VALUE IS SPECIFIED      00670000
+//*                                                                     00680000
+//*         - 'YES'                                                     00690000
+//*           DATASETS WITH EXPIRATION DATE NOT STILL REACHED           00700000
+//*           WILL BE DELETED.                                          00710000
+//*                                                                     00720000
+//*       RMM                                                           00730000
+//*       ----                                                          00740000
+//*         - 'NO'                                                      00750000
+//*           EQQDELDS WILL NOT USE EDGXAPI TO DELETE A TAPE DATASET,   00760000
+//*           BUT THE TRADITIONAL IDCAMS NOSCRATCH.                     00770000
+//*           THIS IS THE DEFAULT IF AN INVALID VALUE IS SPECIFIED      00780000
+//*                                                                     00790000
+//*         - 'YES'                                                     00800000
+//*           DATASETS THAT RESIDE ON TAPE VOLUME, ARE DELETED THROUGH  00810000
+//*           EDGXAPI OF DFSMSRMM.                                      00820000
+//*                                                                     00830000
+//*       GDGNSTD                                                       00840000
+//*       -------                                                       00850000
+//*         - 'NO'                                                      00860000
+//*           EQQDELDS RECOGNIZES GDG DATASETS VIA THE STANDARD         00870000
+//*           FLAG IFCGDG.                                              00880000
+//*           THIS IS THE DEFAULT VALUE.                                00890000
+//*                                                                     00900000
+//*         - 'YES'                                                     00910000
+//*           EQQDELDS RECOGNIZES GDG DATASETS CHECKING THE             00920000
+//*           LAST DATA-SET-NAME-QUALIFIER (GNNNNVNN).                  00930000
+//*                                                                     00940000
+//*       DELLOGIC                                                      00950000
+//*       --------                                                      00960000
+//*         - '1'                                                       00970000
+//*           EQQDELDS USES OLD LOGIC TO DECIDE WHICH DATA SETS         00980000
+//*           NEED ACTIONS.                                             00990000
+//*           THIS IS THE DEFAULT VALUE.                                01000000
+//*                                                                     01010000
+//*         - '2'                                                       01020000
+//*           EQQDELDS USES A NEW LOGIC: IT WILL                        01030000
+//*           CONSIDER ELIGIBLE FOR DELETION ALL DISP=NEW               01040000
+//*           (DATA SET MUST BE PRESENT IN THE CATALOG)                 01050000
+//*                                                                     01060000
+//*                                                                     01070000
+//*                                                                     01080000
+//*                                                                     01090000
+//*       noreex                                                 $CBXA  01100000
+//*       --------                                               $CBXA  01110000
+//*         - 'NO'                                                      01120000
+//*           EQQDELDS program is executed on every run of the job,     01130000
+//*           Job Restart included.                                     01140000
+//*           This is the default value.                                01150000
+//*                                                                     01160000
+//*         - 'YES'                                                     01170000
+//*           EQQDELDS program is executed in a dummy way in order to   01180000
+//*           avoid changing the steplist on following restarts of the  01190000
+//*           job. This parameter is set only by the EQQUX001 exit      01200000
+//*           properly customized, therefore it must be set to NO       01210000
+//*           in this sample.                                           01220000
+//*                                                                     01230000
+//*    b) EQQDELDS is never invoked by   OPC  . The decision to         01240000
+//*       include an EQQDELDS step in a job is entirely up to you.      01250000
+//*                                                                     01260000
+//*    c) EQQDELDS is sensitive to its placement in the JCL.            01270000
+//*       Only datasets referenced in steps following the EQQDELDS      01280000
+//*       step (identified by the EQQDELDS program name, scanning       01290000
+//*       in SCT control block order) will be processed. The normal     01300000
+//*       operation is to execute this program as the first step in     01310000
+//*       a job though.                                                 01320000
+//*                                                                     01330000
+//*    d) EQQDELDS will not attempt to process:                         01340000
+//*                                                                     01350000
+//*       - catalogs                                                    01360000
+//*       - SYSOUT, SYSIN, temporary or dummy datasets                  01370000
+//*       - GDG datasets                                                01380000
+//*                                                                     01390000
+//*    e) EQQDELDS will not process private (user) catalogs, even if    01400000
+//*       specified in JOB- or STEPCAT JCL statements.                  01410000
+//*                                                                     01420000
+//* 3. A word of warning:                                               01430000
+//* =====================                                               01440000
+//*                                                                     01450000
+//*    >>> use with caution <<<                                         01460000
+//*                                                                     01470000
+//*    EQQDELDS will unconditionally delete all datasets                01480000
+//*    that have the properties stated above. Since the program cannot  01490000
+//*    have any knowledge of the step execution path (steps bypassed,   01500000
+//*    job flush and so on), this may cause undesired deletion of       01510000
+//*    vital datasets.                                                  01520000
+//*                                                                     01530000
+//*    DFHSM Version 2 Release 5 or higher is required to delete        01540000
+//*    migrated datasets.                                               01550000
+//*                                                                     01560000
+//*    DFSMSrmm Version 1 Release 5 at level of ++APAR OW37593 is       01570000
+//*    required to delete tape dataset using DFSMSrmm API.              01580000
+//*                                                                     01590000
+//*                                                              *      01600000
+//*                                                                     01610000
+//CA11RMS  EXEC PGM=IEFBR14,                                            01620000
+//         PARM='&RUNTYP&TYPRUN'                                        01630000
+//RMSRPT    DD  SYSOUT=*                                                01640000
+//SYSUDUMP  DD  SYSOUT=D                                                01650000
+//*                                                                     01660000
+//TWSNEVER  DD  DUMMY                                                   01670000
+//*                                                                     01680000
+//*                                                                     01690000
+//*                                                                     01700000
+//EQQDELDS EXEC PGM=EQQDELDS,                                           01710001
+
+// PARM='&ABTYPE,&CONDO,&PASS,&PURGE,&RMM,&GDGNSTD,&DELLOGIC,&NOREEX'   01720000
+//SYSPRINT  DD SYSOUT=*                                                 01730000
+//*                                                                     01740000
+//TWSNEVER  DD  DUMMY                                                   01750000
+//*                                                                     01760000
