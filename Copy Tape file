@@ -1,0 +1,9 @@
+//STEP010  EXEC PGM=SORT,PARM='VLTEST=0'
+//SYSOUT    DD SYSOUT=*
+//SORTIN    DD DSN=tape file,DISP=SHR
+//SORTOUT   DD DSN=output dasd,
+//           DISP=(NEW,CATLG,DELETE),
+//           SPACE=(CYL,(100,100),RLSE)
+//SYSIN     DD *
+ SORT FIELDS=COPY
+/*
