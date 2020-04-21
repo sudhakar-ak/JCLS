@@ -1,0 +1,25 @@
+//SORT0001 EXEC PGM=SORT
+//SORTIN   DD *
+1234     A
+5678     A    B
+9012          B
+//SYSOUT   DD SYSOUT=*
+//S0RTOF01 DD SYSOUT=*
+//S0RTOF02 DD SYSOUT=*
+//S0RTOF03 DD SYSOUT=*
+//SORTOUT  DD SYSOUT=*
+//SYSIN    DD *
+ SORT FIELDS=COPY
+ OUTFIL FILES=01,
+        IFTHEN=(WHEN=(10,1,CH,EQ,C'A',&,
+                      15,1,CH,NE,C'B'),
+                BUILD=(1,9,20:C'1',80:X)),
+ OUTFIL FILES=02,
+        IFTHEN=(WHEN=(10,1,CH,NE,C'A',&,
+                      15,1,CH,EQ,C'B'),
+                BUILD=(1,9,20:C'2',80:X)),
+ OUTFIL FILES=03,
+        IFTHEN=(WHEN=(10,1,CH,EQ,C'A',&,
+                      15,1,CH,EQ,C'B'),
+                      BUILD=(1,9,20:C'1',80:X,/,1,9,20:C'2',80:X))
+/*
