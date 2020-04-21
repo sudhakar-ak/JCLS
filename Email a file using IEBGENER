@@ -1,0 +1,19 @@
+//STEP010  EXEC PGM=IEBGENER
+//SYSOUT    DD SYSOUT=*
+//SYSPRINT  DD SYSOUT=*
+//SYSIN     DD DUMMY
+//PDFOUT    OUTPUT DEST=EPSE.EMAILTXT,                   +
+//          USERDATA=('TO=EMAIL@WEBSITE.COM', +
+//    'SUBJECT=SUBJECT', +
+//    'FILENAME=file name.pdf', +
+//            'MSG=')
+//SYSUT2   DD SYSOUT=9,OUTPUT=(*.PDFOUT)
+//SYSUT1   DD DSN=Mainframe file which you want to send,DISP=SHR
+//********************************************************************
+//*   FOR TEXT - USE EPSE.EMAILTXT AND .TXT AS THE FILE SUFFIX       *
+//*   FOR PDF  - USE EPSE.EMAILPDF AND .PDF AS THE FILE SUFFIX       *
+//*   IN THE SAMPLE CODE ABOVE, THE MAINFRAME DSN BECOMES THE        *
+//*   EMAIL SUBJECT LINE AND ALSO THE FILENAME OF THE ATTACHMENT     *
+//*   IN DOS/WINDOWS FORMAT WITH ".TXT" OR ".PDF" AS THE             *
+//*   FILENAME EXTENSION.                                            *
+//********************************************************************
